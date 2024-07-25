@@ -9,6 +9,27 @@ fun main() {
 
     chequingAccount1.withdraw(500.00)
     chequingAccount1.deposit(50.00)
+
+    println(chequingAccount1.toString())
+
+    var chequingAccount2 = ChequingAccount("1111112",
+        "C1002")
+    println(chequingAccount2.toString())
+
+    var chequingAccount3 = ChequingAccount("1111113",
+        "C1003", 500.00)
+    println(chequingAccount3.toString())
+
+    var savingsAccount1 = SavingsAccount("1111114",
+        "C1003", 500.00, false)
+    println(savingsAccount1.toString())
+    savingsAccount1.deposit(500.00)
+    savingsAccount1.payBill(100.00)
+    savingsAccount1.withdraw(200.00)
+    println(savingsAccount1.toString())
+    savingsAccount1.taxFreeStatus = true
+    println(savingsAccount1.toString())
+
 }
 
 abstract class BankAccount(
@@ -34,6 +55,12 @@ abstract class BankAccount(
             println("Withdrawal amount of $amount exceeds available funds.")
         }
     }
+
+    override fun toString(): String
+    {
+        return "Account #: $accountNumber  Client #: $clientNumber  Balance: $%.2f".format(balance)
+    }
+
 }
 
 open class ChequingAccount(
@@ -65,5 +92,46 @@ open class ChequingAccount(
         {
             println("Bill payment amount of $amount exceeds available funds.")
         }
+    }
+
+    override fun toString(): String
+    {
+        return super.toString() + " Overdraft Limit: $%.2f".format(overdraftLimit)
+    }
+
+}
+
+
+open class SavingsAccount(
+    accountNumber: String,
+    clientNumber: String,
+    balance: Double = 0.0,
+    var taxFreeStatus: Boolean = false
+) : BankAccount(accountNumber, clientNumber, balance)
+{
+    open fun payBill(amount: Double)
+    {
+        if (amount <= balance) {
+            balance -= amount
+            println("After a bill payment of $amount the new balance is $balance")
+        }
+        else
+        {
+            println("Bill payment amount of $amount exceeds available funds.")
+        }
+    }
+
+    override fun toString(): String
+    {
+        var status: String
+        if(taxFreeStatus == true)
+        {
+            status = "  Tax Free: active"
+        }
+        else
+        {
+            status = "  Tax Free: inactive"
+        }
+        return super.toString() + status
     }
 }
